@@ -3,6 +3,7 @@ import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { i18n } from "../contexts/LanguageContext";
 
 export default function LoginScreen({navigation}:any) {
     const [email, setEmail] = useState('mjsalinas@unitec.edu');
@@ -33,7 +34,7 @@ export default function LoginScreen({navigation}:any) {
             value={email} 
             onChange={setEmail}/>
             
-            <CustomButton title={"Iniciar Sesion"} 
+            <CustomButton title={i18n.t('signIn')} 
             onPress={handleLogin}/>
         </View>
     )
