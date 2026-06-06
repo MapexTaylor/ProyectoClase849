@@ -7,29 +7,29 @@ import ScreenWrapper from "../components/ScreenWrapper";
 import SectionTitle from "../components/SectionTitle";
 import StarRating from "../components/StarRating";
 import TagChip from "../components/TagChip";
-import { useSkincare } from "../contexts/SkincareContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import {
-  CATEGORY_LABELS,
-  UsageTimeUnit,
-} from "../utils/types/Skincare";
+import { CATEGORY_LABELS, UsageTimeUnit } from "../utils/types/Skincare";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { addReview, deleteProduct } from "../store/slices/skincareSlice";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ProductDetail">;
 
 export default function ProductDetailScreen({ route, navigation }: Props) {
+  const dispatch = useAppDispatch();
+  const products = useAppSelector((state) => state.skincare.products);
+
   const { productId } = route.params;
-  const { products, addReview, deleteProduct } = useSkincare();
   const { colors } = useTheme();
   const product = products.find((p) => p.id === productId);
 
   const [rating, setRating] = useState(product?.review?.rating ?? 0);
   const [comment, setComment] = useState(product?.review?.comment ?? "");
   const [usageDuration, setUsageDuration] = useState(
-    product?.review?.usageDuration?.toString() ?? ""
+    product?.review?.usageDuration?.toString() ?? "",
   );
   const [usageUnit, setUsageUnit] = useState<UsageTimeUnit>(
-    product?.review?.usageUnit ?? "weeks"
+    product?.review?.usageUnit ?? "weeks",
   );
 
   if (!product) {
@@ -49,23 +49,29 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
 
   const handleSaveReview = () => {
     if (rating === 0 || !usageDuration.trim()) return;
-    addReview(productId, {
-      rating,
-      comment: comment.trim(),
-      usageDuration: parseInt(usageDuration, 10),
-      usageUnit,
-    });
+    const payload = {
+      productId,
+      review: {
+        rating,
+        comment: comment.trim(),
+        usageDuration: parseInt(usageDuration, 10),
+        usageUnit,
+      },
+    };
+    dispatch(addReview(payload));
     navigation.goBack();
   };
 
   const handleDelete = () => {
-    deleteProduct(productId);
+    dispatch(deleteProduct(productId));
     navigation.goBack();
   };
 
   return (
     <ScreenWrapper>
-      <View style={[styles.header, { backgroundColor: colors.inputBackground }]}>
+      <View
+        style={[styles.header, { backgroundColor: colors.inputBackground }]}
+      >
         <Text style={[styles.name, { color: colors.buttonTertiaryText }]}>
           {product.name}
         </Text>
@@ -114,7 +120,9 @@ export default function ProductDetailScreen({ route, navigation }: Props) {
       </View>
 
       {product.review && (
-        <View style={[styles.existingReview, { borderColor: colors.secondary }]}>
+        <View
+          style={[styles.existingReview, { borderColor: colors.secondary }]}
+        >
           <Text style={[styles.existingLabel, { color: colors.textSecondary }]}>
             Reseña actual
           </Text>
