@@ -6,7 +6,6 @@ import ScreenWrapper from "../../components/ScreenWrapper";
 import SectionTitle from "../../components/SectionTitle";
 import TagChip from "../../components/TagChip";
 import { useAuth } from "../../contexts/AuthContext";
-import { useSkincare } from "../../contexts/SkincareContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import {
   SkinType,

@@ -6,10 +6,10 @@ import ScreenWrapper from "../components/ScreenWrapper";
 import SectionTitle from "../components/SectionTitle";
 import StarRating from "../components/StarRating";
 import { useAuth } from "../contexts/AuthContext";
-import { useSkincare } from "../contexts/SkincareContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { i18n } from "../contexts/LanguageContext";
 import { CATEGORY_LABELS } from "../utils/types/Skincare";
+import { useAppSelector } from "../store/hooks";
 
 type RoutinePreviewProps = {
   title: string;
@@ -18,7 +18,9 @@ type RoutinePreviewProps = {
 };
 
 function RoutinePreview({ title, icon, productIds }: RoutinePreviewProps) {
-  const { products } = useSkincare();
+    const products = useAppSelector((state) => state.skincare.products);
+    const routine = useAppSelector((state) => state.skincare.routine);
+    // const reviews = useAppSelector((state) => state.skincare.products)
   const { colors } = useTheme();
 
   const routineProducts = productIds
@@ -62,8 +64,11 @@ function RoutinePreview({ title, icon, productIds }: RoutinePreviewProps) {
 }
 
 export default function HomeScreen() {
+     const products = useAppSelector((state) => state.skincare.products);
+    const routine = useAppSelector((state) => state.skincare.routine);
+    const profile = useAppSelector((state)=> state.userProfile);
+
   const { user } = useAuth();
-  const { routine, products, profile } = useSkincare();
   const { colors } = useTheme();
 
   const reviewedCount = products.filter((p) => p.review).length;
