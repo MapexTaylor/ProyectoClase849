@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "expo": {
+      "scheme": "miappskincare"
+    },
+    "plugins": [
+      "expo-web-browser"
+    ]
   }
 }

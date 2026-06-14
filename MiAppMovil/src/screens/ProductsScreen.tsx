@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import ScreenWrapper from '../components/ScreenWrapper';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
@@ -42,7 +43,9 @@ const ProductsScreen = () => {
       return;
     }
 
-    if (data) setProducts(data);
+    if (data) {
+      setProducts(data);
+    }
   };
 
   // Carga los productos al montar el componente
@@ -53,36 +56,43 @@ const ProductsScreen = () => {
   // ─── CREATE Product ─────────────────────────────────────────
   const handleAddProduct = async () => {
     if (!name.trim() || !brand.trim()) {
-      Alert.alert('Campos incompletos', 'Nombre y marca son obligatorios.');
+      Alert.alert('Campos requeridos', 'Debes completar nombre y marca.');
       return;
     }
 
-    setLoading(true);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    const { error } = await supabase
+    if (userError || !user) {
+      Alert.alert('Error', 'Debes iniciar sesión antes de agregar productos.');
+      return;
+    }
+
+    const { data, error } = await supabase
       .from('products')
-      .insert([{
-        name: name.trim(),
-        brand: brand.trim(),
-        category,
-      }])
+      .insert([
+        {
+          name: name.trim(),
+          brand: brand.trim(),
+          category,
+          user_id: user.id,
+        },
+      ])
       .select();
-
-    setLoading(false);
 
     if (error) {
       Alert.alert('Error', error.message);
       return;
     }
 
-    // Limpiar formulario
+    await fetchProducts();
+
+    // Actualiza el estado local o vuelve a hacer fetch
     setName('');
     setBrand('');
-    setCategory(CATEGORIES[0]);
     setShowForm(false);
-
-    // Recargar lista
-    fetchProducts();
   };
 
   // ─── Render de cada producto ─────────────────────────────────
