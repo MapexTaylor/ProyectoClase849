@@ -36,7 +36,7 @@ const RegisterScreen = ({ navigation }: any) => {
     }
 
     // Registro exitoso
-    if (data.user) {
+    if (data.user !== null) {
       Alert.alert(
         '¡Registro exitoso!',
         'Tu cuenta fue creada correctamente.',
